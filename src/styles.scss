@@ -3,6 +3,21 @@
 @tailwind utilities;
 
 /* You can add global styles to this file, and also import other style files */
+@font-face {
+  font-family: '0xProto';
+  src: url('assets/fonts/0xProto.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Blackout Sunrise';
+  src: url('assets/fonts/BlackoutSunrise.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
 html,
 body {
@@ -10,6 +25,14 @@ body {
 }
 body {
   margin: 0;
-  // font-family: 'Share Tech Mono', sans-serif;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-family: '0xProto', sans-serif;
+  font-weight: normal;
+  font-style: normal;
+}
+
+body h1 {
+  font-family: 'Blackout Sunrise';
+  font-weight: normal;
+  font-style: normal;
+  letter-spacing: 1px;
 }
