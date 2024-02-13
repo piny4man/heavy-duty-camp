@@ -24,6 +24,7 @@
     "@heavy-duty/wallet-adapter-material": "^0.8.0",
     "@nx/angular": "18.0.2",
     "buffer": "^6.0.3",
+    "ngxtension": "^2.0.0",
     "rxjs": "~7.8.0",
     "tailwindcss-animated": "^1.0.1",
     "tslib": "^2.3.0",
