@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { map, of } from 'rxjs';
-import { AccountResult } from './types';
+import { AccountResult, TransactionsResult } from './types';
 
 @Injectable({ providedIn: 'root' })
 export class ShyftApiService {
@@ -30,6 +30,19 @@ export class ShyftApiService {
 
     return this._httpClient
       .get<AccountResult>(url.toString(), { headers: this._header })
+      .pipe(map((res) => res.result));
+  }
+
+  getTransactions(publicKey?: string | null) {
+    if (!publicKey) return of(null);
+
+    const url = new URL('https://api.shyft.to/sol/v1/transaction/history');
+    url.searchParams.append('network', 'mainnet-beta');
+    url.searchParams.append('account', publicKey);
+    url.searchParams.append('enable_raw', 'true');
+
+    return this._httpClient
+      .get<TransactionsResult>(url.toString(), { headers: this._header })
       .pipe(map((res) => res.result));
   }
 }
