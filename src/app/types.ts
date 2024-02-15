@@ -1,6 +1,10 @@
 export type AccountResult = {
   result: {
     balance: number;
-    info: { image: string };
+    info?: {
+      name: string;
+      symbol: string;
+      image: string;
+    };
   };
 };

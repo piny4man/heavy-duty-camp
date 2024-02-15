@@ -8,10 +8,9 @@ import { HdWalletMultiButtonComponent } from '@heavy-duty/wallet-adapter-materia
   selector: 'heavy-duty-camp-root',
   template: `<main
     class="min-h-screen p-4 flex w-screen justify-start items-stretch flex-col gap-5"
-    style="background-image: url(assets/background.webp); background-size: cover;"
   >
     <nav
-      class="w-full navbar bg-base-100 bg-opacity-50 backdrop-blur text-rose-400 rounded-md box-border shadow"
+      class="w-full navbar bg-base-100 bg-opacity-50 backdrop-blur text-slate-300 rounded-md box-border shadow"
     >
       <section class="navbar-start">
         <div class="dropdown">
