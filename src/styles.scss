@@ -28,11 +28,39 @@ body {
   font-family: '0xProto', sans-serif;
   font-weight: normal;
   font-style: normal;
+  background: linear-gradient(
+    -45deg,
+    #9945ff,
+    #6981db,
+    #579bca,
+    #43b4bc,
+    #21dfa1,
+    #14f195
+  );
+  background-size: 200% 150%;
+  animation: gradient 10s ease infinite;
+  height: 100vh;
+
+  h1 {
+    font-family: 'Blackout Sunrise';
+    font-weight: normal;
+    font-style: normal;
+    letter-spacing: 1px;
+  }
+
+  .page {
+    height: calc(100dvh - 145px);
+  }
 }
 
-body h1 {
-  font-family: 'Blackout Sunrise';
-  font-weight: normal;
-  font-style: normal;
-  letter-spacing: 1px;
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
