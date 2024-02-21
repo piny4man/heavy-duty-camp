@@ -4,7 +4,9 @@ export const appRoutes: Route[] = [
   {
     path: '',
     loadComponent: () =>
-      import('./pages/balance.component').then((m) => m.HomePageComponent),
+      import('./pages/balance/balance.component').then(
+        (m) => m.HomePageComponent,
+      ),
   },
   {
     path: '**',
