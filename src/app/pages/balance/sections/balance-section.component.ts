@@ -1,13 +1,14 @@
 import { Component, inject } from '@angular/core';
-import { ShyftApiService } from '../shyft-api.service';
+import { ShyftApiService } from '../../../shyft-api.service';
 import { WalletStore } from '@heavy-duty/wallet-adapter';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { computedAsync } from 'ngxtension/computed-async';
 import { NgIf } from '@angular/common';
+import { TransferModalComponent } from 'src/app/components/transfer-modal.component';
 
 @Component({
   selector: 'heavy-duty-camp-balance-section',
-  imports: [NgIf],
+  imports: [NgIf, TransferModalComponent],
   template: `
     <section
       class="text-slate-700 flex flex-col justify-start items-center gap-4"
@@ -65,6 +66,9 @@ import { NgIf } from '@angular/common';
             {{ accountSilly()?.balance }} {{ accountSilly()?.info?.symbol }}
           </div>
         </div>
+      </article>
+      <article *ngIf="solanaBalance() || accountSilly()">
+        <heavy-duty-camp-transfer-modal></heavy-duty-camp-transfer-modal>
       </article>
     </section>
   `,
