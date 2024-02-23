@@ -61,8 +61,17 @@ import { FormsModule } from '@angular/forms';
                 <tr>
                   <td>{{ transaction.timestamp | date: 'short' }}</td>
                   <td>{{ transaction.fee }} SOL</td>
-                  <td>{{ transaction.fee_payer }}</td>
-                  <td>{{ transaction.raw.meta.postTokenBalances[0].owner }}</td>
+                  <td class="text-ellipsis" title="{{ transaction.fee_payer }}">
+                    {{ transaction.fee_payer }}
+                  </td>
+                  <td
+                    class="text-ellipsis"
+                    title="{{
+                      transaction.raw.meta.postTokenBalances[0].owner
+                    }}"
+                  >
+                    {{ transaction.raw.meta.postTokenBalances[0].owner }}
+                  </td>
                 </tr>
               } @empty {
                 <tr>

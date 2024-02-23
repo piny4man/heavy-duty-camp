@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { TransferFormComponent } from './transfer-form.component';
 
 @Component({
   selector: 'heavy-duty-camp-transfer-modal',
@@ -9,15 +9,13 @@ import { FormsModule } from '@angular/forms';
       Transfer
     </button>
     <dialog id="transfer_modal" class="modal">
-      <div class="modal-box">
+      <div
+        class="modal-box bg-base-100 bg-opacity-50 backdrop-blur text-slate-200"
+      >
         <header>
-          <h3 class="font-bold text-lg text-slate-300">Transfer</h3>
+          <h3 class="font-bold text-lg">Transfer</h3>
         </header>
-        <form>
-          <p class="py-4 text-slate-400">
-            Press ESC key or click outside to close
-          </p>
-        </form>
+        <heavy-duty-camp-transfer-form></heavy-duty-camp-transfer-form>
       </div>
       <form method="dialog" class="modal-backdrop">
         <button>close</button>
@@ -25,6 +23,6 @@ import { FormsModule } from '@angular/forms';
     </dialog>
   `,
   standalone: true,
-  imports: [FormsModule],
+  imports: [TransferFormComponent],
 })
 export class TransferModalComponent {}
