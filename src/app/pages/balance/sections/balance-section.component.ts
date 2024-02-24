@@ -67,9 +67,9 @@ import { TransferModalComponent } from 'src/app/components/transfer-modal.compon
           </div>
         </div>
       </article>
-      <article *ngIf="solanaBalance() || accountSilly()">
+      <footer *ngIf="solanaBalance() || accountSilly()">
         <heavy-duty-camp-transfer-modal></heavy-duty-camp-transfer-modal>
-      </article>
+      </footer>
     </section>
   `,
   standalone: true,
