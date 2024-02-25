@@ -22,11 +22,9 @@ import { createTransferInstructions } from '@heavy-duty/spl-utils';
         <heavy-duty-camp-transfer-form
           [balance]="balance"
           (submitForm)="onTransfer($event)"
+          [isTransferDisabled]="isTransferDisabled"
         ></heavy-duty-camp-transfer-form>
       </div>
-      <form method="dialog" class="modal-backdrop">
-        <button>close</button>
-      </form>
     </dialog>
   `,
   standalone: true,
@@ -34,25 +32,34 @@ import { createTransferInstructions } from '@heavy-duty/spl-utils';
 })
 export class TransferModalComponent {
   private readonly _transactionSender = injectTransactionSender();
+  isTransferDisabled = false;
 
   @Input() balance?: number;
 
   onTransfer(payload: TransferFormPayload) {
     this._transactionSender
-      .send(({ publicKey }) =>
-        createTransferInstructions({
+      .send(({ publicKey }) => {
+        this.isTransferDisabled = true;
+
+        return createTransferInstructions({
           memo: payload.memo,
           amount: payload.amount * 10 ** 9,
           senderAddress: publicKey.toBase58(),
           receiverAddress: payload.receiverAddr,
           mintAddress: '7EYnhQoR9YM3N7UoaKRoA44Uy8JeaZV3qyouov87awMs',
           fundReceiver: true,
-        }),
-      )
+        });
+      })
       .subscribe({
         next: (signature) => console.log(`Signature: ${signature}`),
-        error: (err) => console.error(err),
-        complete: () => console.info('Transfer ready'),
+        error: (err) => {
+          console.error(err);
+          this.isTransferDisabled = false;
+        },
+        complete: () => {
+          console.info('Transfer ready');
+          this.isTransferDisabled = false;
+        },
       });
   }
 }

@@ -23,7 +23,7 @@ import { FormsModule } from '@angular/forms';
             [(ngModel)]="searchTerm"
             type="text"
             class="grow bg-transparent"
-            placeholder="Search transactions using 'From' or 'To' address"
+            placeholder="Search transactions using 'From address' or 'Type of transaction'"
           />
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -49,8 +49,8 @@ import { FormsModule } from '@angular/forms';
               <tr>
                 <th>Date</th>
                 <th>Amount</th>
-                <th>From</th>
-                <th>To</th>
+                <th>Type</th>
+                <th class="max-w-64">From</th>
               </tr>
             </thead>
             <tbody>
@@ -61,16 +61,14 @@ import { FormsModule } from '@angular/forms';
                 <tr>
                   <td>{{ transaction.timestamp | date: 'short' }}</td>
                   <td>{{ transaction.fee }} SOL</td>
-                  <td class="text-ellipsis" title="{{ transaction.fee_payer }}">
-                    {{ transaction.fee_payer }}
+                  <td title="{{ transaction.type }}">
+                    {{ transaction.type }}
                   </td>
                   <td
-                    class="text-ellipsis"
-                    title="{{
-                      transaction.raw.meta.postTokenBalances[0].owner
-                    }}"
+                    class="max-w-64 text-ellipsis"
+                    title="{{ transaction.fee_payer }}"
                   >
-                    {{ transaction.raw.meta.postTokenBalances[0].owner }}
+                    {{ transaction.fee_payer }}
                   </td>
                 </tr>
               } @empty {
@@ -107,9 +105,7 @@ export class TransactionsSectionComponent {
         transaction.fee_payer
           .toLowerCase()
           .includes(this.searchTerm.toLowerCase()) ||
-        transaction.raw.meta.postTokenBalances[0].owner
-          .toLowerCase()
-          .includes(this.searchTerm.toLowerCase()),
+        transaction.type.toLowerCase().includes(this.searchTerm.toLowerCase()),
     );
   }
 }

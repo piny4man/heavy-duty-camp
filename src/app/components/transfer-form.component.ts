@@ -31,14 +31,9 @@ export interface TransferFormPayload {
           name="memo"
           placeholder="Transfer memo"
           class="input input-primary input-bordered w-full bg-transparent placeholder:text-slate-400"
-          [ngClass]="{
-            'input-error input-bordered':
-              form.submitted &&
-              memoControl.errors &&
-              memoControl.errors['required']
-          }"
           [(ngModel)]="model.memo"
           required
+          [disabled]="!!isTransferDisabled"
           #memoControl="ngModel"
         />
         <div class="label text-xs">
@@ -57,7 +52,7 @@ export interface TransferFormPayload {
           }
         </div>
       </section>
-      <section class="text-slate-500 form-control w-full">
+      <section class="text-slate-500 w-full">
         <div class="label">
           <span class="label-text">Amount</span>
         </div>
@@ -70,6 +65,7 @@ export interface TransferFormPayload {
           class="input input-bordered w-full bg-transparent placeholder:text-slate-400"
           [ngClass]="{ 'input-error': !!amountControl.errors }"
           [(ngModel)]="model.amount"
+          [disabled]="!!isTransferDisabled"
           required
           #amountControl="ngModel"
         />
@@ -87,14 +83,18 @@ export interface TransferFormPayload {
             <span class="label-text-alt text-[10px] text-red-500"
               >Amount should be greater than 0</span
             >
+          } @else if (amountControl?.errors?.['max']) {
+            <span class="label-text-alt text-[10px] text-red-500"
+              >Amount should be less or equal than {{ balance }}</span
+            >
           } @else {
             <span class="label-text-alt text-xs"
-              >Max amount available: {{ balance }}</span
+              >Max amount available: {{ balance }} SILLY</span
             >
           }
         </div>
       </section>
-      <section class="text-slate-500 form-control w-full">
+      <section class="text-slate-500 w-full">
         <div class="label">
           <span class="label-text">Receiver</span>
         </div>
@@ -105,6 +105,7 @@ export interface TransferFormPayload {
           class="grow input input-bordered w-full bg-transparent placeholder:text-slate-400"
           [ngClass]="{ 'input-error': !!receiverAddrControl.errors }"
           [(ngModel)]="model.receiverAddr"
+          [disabled]="!!isTransferDisabled"
           required
           #receiverAddrControl="ngModel"
         />
@@ -125,11 +126,22 @@ export interface TransferFormPayload {
           }
         </div>
       </section>
-      <footer>
-        <button class="btn" type="submit" [disabled]="form.invalid">
+      <section
+        class="w-full flex flex-row-reverse justify-center items-center gap-4"
+      >
+        <button
+          class="btn btn-primary"
+          type="submit"
+          [disabled]="form.invalid || !!isTransferDisabled"
+        >
           Send
         </button>
-      </footer>
+        <form class="modal-action" method="dialog">
+          <button class="btn btn-neutral" [disabled]="isTransferDisabled">
+            Cancel
+          </button>
+        </form>
+      </section>
     </form>
   `,
   standalone: true,
@@ -143,6 +155,7 @@ export class TransferFormComponent {
   };
 
   @Input() balance?: number;
+  @Input() isTransferDisabled?: boolean;
 
   @Output() readonly submitForm = new EventEmitter<TransferFormPayload>();
 
