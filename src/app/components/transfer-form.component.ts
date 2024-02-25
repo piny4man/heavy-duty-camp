@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 
 export interface TransferFormModel {
@@ -22,7 +22,7 @@ export interface TransferFormPayload {
       (ngSubmit)="onSubmit(form)"
       class="py-4 text-slate-200 flex flex-col justify-start items-stretch gap-2"
     >
-      <section class="text-slate-500 w-full max-w-xs">
+      <section class="text-slate-300 w-full">
         <div class="label">
           <span class="label-text">Memo</span>
         </div>
@@ -30,11 +30,12 @@ export interface TransferFormPayload {
           type="text"
           name="memo"
           placeholder="Transfer memo"
-          class="input w-full max-w-xs bg-transparent placeholder:text-slate-600"
+          class="input input-primary input-bordered w-full bg-transparent placeholder:text-slate-400"
           [ngClass]="{
-            'input-primary input-bordered':
-              memoControl.valid && memoControl.pristine,
-            'input-error input-bordered': !!memoControl.errors
+            'input-error input-bordered':
+              form.submitted &&
+              memoControl.errors &&
+              memoControl.errors['required']
           }"
           [(ngModel)]="model.memo"
           required
@@ -56,7 +57,7 @@ export interface TransferFormPayload {
           }
         </div>
       </section>
-      <section class="text-slate-500 form-control w-full max-w-xs">
+      <section class="text-slate-500 form-control w-full">
         <div class="label">
           <span class="label-text">Amount</span>
         </div>
@@ -65,12 +66,14 @@ export interface TransferFormPayload {
           name="amount"
           placeholder="0.00"
           min="0"
-          class="input input-bordered w-full max-w-xs bg-transparent placeholder:text-slate-600"
+          max="{{ balance }}"
+          class="input input-bordered w-full bg-transparent placeholder:text-slate-400"
           [ngClass]="{ 'input-error': !!amountControl.errors }"
           [(ngModel)]="model.amount"
           required
           #amountControl="ngModel"
         />
+        <!-- TODO: Improve validations, add max validation and something else if needed -->
         <div class="label text-xs">
           @if (
             form.submitted &&
@@ -85,11 +88,13 @@ export interface TransferFormPayload {
               >Amount should be greater than 0</span
             >
           } @else {
-            <span class="label-text-alt text-xs">Max amount available: ??</span>
+            <span class="label-text-alt text-xs"
+              >Max amount available: {{ balance }}</span
+            >
           }
         </div>
       </section>
-      <section class="text-slate-500 form-control w-full max-w-xs">
+      <section class="text-slate-500 form-control w-full">
         <div class="label">
           <span class="label-text">Receiver</span>
         </div>
@@ -97,7 +102,7 @@ export interface TransferFormPayload {
           type="text"
           name="receiverAddr"
           placeholder="Receiver public key"
-          class="grow input input-bordered w-full max-w-xs bg-transparent placeholder:text-slate-600"
+          class="grow input input-bordered w-full bg-transparent placeholder:text-slate-400"
           [ngClass]="{ 'input-error': !!receiverAddrControl.errors }"
           [(ngModel)]="model.receiverAddr"
           required
@@ -136,6 +141,8 @@ export class TransferFormComponent {
     amount: undefined,
     receiverAddr: undefined,
   };
+
+  @Input() balance?: number;
 
   @Output() readonly submitForm = new EventEmitter<TransferFormPayload>();
 

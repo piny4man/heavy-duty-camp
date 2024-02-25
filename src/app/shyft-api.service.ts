@@ -5,8 +5,15 @@ import { AccountResult, TransactionsResult } from './types';
 
 @Injectable({ providedIn: 'root' })
 export class ShyftApiService {
+  private readonly _apiKey = 'oUstyqtMxTQqyOEO';
   private readonly _httpClient = inject(HttpClient);
-  private readonly _header = { 'x-api-key': 'oUstyqtMxTQqyOEO' };
+  private readonly _header = { 'x-api-key': this._apiKey };
+
+  getRpcEndpoint() {
+    const url = new URL('https://rpc.shyft.to');
+    url.searchParams.append('api_key', this._apiKey);
+    return url.toString();
+  }
 
   getSolanaBalance(publicKey?: string) {
     if (!publicKey) return of(null);

@@ -1,7 +1,10 @@
-import { Component } from '@angular/core';
-import { TransferFormComponent, TransferFormPayload } from './transfer-form.component';
+import { Component, Input } from '@angular/core';
+import {
+  TransferFormComponent,
+  TransferFormPayload,
+} from './transfer-form.component';
 import { injectTransactionSender } from '@heavy-duty/wallet-adapter';
-import { createTransferInstructions } from '@heavy-duty/spl-utils'
+import { createTransferInstructions } from '@heavy-duty/spl-utils';
 
 @Component({
   selector: 'heavy-duty-camp-transfer-modal',
@@ -16,7 +19,10 @@ import { createTransferInstructions } from '@heavy-duty/spl-utils'
         <header>
           <h3 class="font-bold text-lg">Transfer</h3>
         </header>
-        <heavy-duty-camp-transfer-form (submitForm)="onTransfer($event)"></heavy-duty-camp-transfer-form>
+        <heavy-duty-camp-transfer-form
+          [balance]="balance"
+          (submitForm)="onTransfer($event)"
+        ></heavy-duty-camp-transfer-form>
       </div>
       <form method="dialog" class="modal-backdrop">
         <button>close</button>
@@ -27,23 +33,26 @@ import { createTransferInstructions } from '@heavy-duty/spl-utils'
   imports: [TransferFormComponent],
 })
 export class TransferModalComponent {
-  private readonly _transactionSender = injectTransactionSender()
+  private readonly _transactionSender = injectTransactionSender();
+
+  @Input() balance?: number;
 
   onTransfer(payload: TransferFormPayload) {
     this._transactionSender
-      .send(({ publicKey }) => createTransferInstructions({
-        memo: payload.memo,
-        amount: payload.amount,
-        senderAddress: publicKey.toBase58(),
-        receiverAddress: payload.receiverAddr,
-        mintAddress: '7EYnhQoR9YM3N7UoaKRoA44Uy8JeaZV3qyouov87awMs',
-        fundReceiver: true,
-      }))
+      .send(({ publicKey }) =>
+        createTransferInstructions({
+          memo: payload.memo,
+          amount: payload.amount,
+          senderAddress: publicKey.toBase58(),
+          receiverAddress: payload.receiverAddr,
+          mintAddress: '7EYnhQoR9YM3N7UoaKRoA44Uy8JeaZV3qyouov87awMs',
+          fundReceiver: true,
+        }),
+      )
       .subscribe({
         next: (signature) => console.log(`Signature: ${signature}`),
         error: (err) => console.error(err),
-        complete: () => console.info('Transfer ready')
-      })
+        complete: () => console.info('Transfer ready'),
+      });
   }
 }
-
