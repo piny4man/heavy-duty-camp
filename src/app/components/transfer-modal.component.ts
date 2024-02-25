@@ -42,7 +42,7 @@ export class TransferModalComponent {
       .send(({ publicKey }) =>
         createTransferInstructions({
           memo: payload.memo,
-          amount: payload.amount,
+          amount: payload.amount * 10 ** 9,
           senderAddress: publicKey.toBase58(),
           receiverAddress: payload.receiverAddr,
           mintAddress: '7EYnhQoR9YM3N7UoaKRoA44Uy8JeaZV3qyouov87awMs',
