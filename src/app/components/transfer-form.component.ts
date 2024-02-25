@@ -1,6 +1,18 @@
 import { NgClass } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  ViewChild,
+  inject,
+} from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
+import {
+  MatDialog,
+  MatDialogActions,
+  MatDialogContent,
+} from '@angular/material/dialog';
 
 export interface TransferFormModel {
   memo?: string;
@@ -18,14 +30,14 @@ export interface TransferFormPayload {
   selector: 'heavy-duty-camp-transfer-form',
   template: `
     <form
+      class="p-4 text-slate-200 flex flex-col justify-start items-stretch !gap-4"
       #form="ngForm"
       (ngSubmit)="onSubmit(form)"
-      class="py-4 text-slate-200 flex flex-col justify-start items-stretch gap-2"
+      mat-dialog-content
     >
-      <section class="text-slate-300 w-full">
-        <div class="label">
-          <span class="label-text">Memo</span>
-        </div>
+      <section
+        class="text-slate-300 w-full flex flex-col justify-start items-stretch gap-2 mb-4"
+      >
         <input
           type="text"
           name="memo"
@@ -33,10 +45,10 @@ export interface TransferFormPayload {
           class="input input-primary input-bordered w-full bg-transparent placeholder:text-slate-400"
           [(ngModel)]="model.memo"
           required
-          [disabled]="!!isTransferDisabled"
+          [disabled]="!!isSendingTransfer"
           #memoControl="ngModel"
         />
-        <div class="label text-xs">
+        <footer class="text-xs">
           @if (
             form.submitted &&
             memoControl.errors &&
@@ -50,27 +62,26 @@ export interface TransferFormPayload {
               >Memo of the transfer. Ex: "Camp Airdrop"</span
             >
           }
-        </div>
+        </footer>
       </section>
-      <section class="text-slate-500 w-full">
-        <div class="label">
-          <span class="label-text">Amount</span>
-        </div>
+      <section
+        class="text-slate-300 w-full flex flex-col justify-start items-stretch gap-2 mb-4"
+      >
         <input
           type="number"
           name="amount"
-          placeholder="0.00"
+          placeholder="Amount: 0.00"
           min="0"
           max="{{ balance }}"
           class="input input-bordered w-full bg-transparent placeholder:text-slate-400"
           [ngClass]="{ 'input-error': !!amountControl.errors }"
           [(ngModel)]="model.amount"
-          [disabled]="!!isTransferDisabled"
+          [disabled]="!!isSendingTransfer"
           required
           #amountControl="ngModel"
         />
         <!-- TODO: Improve validations, add max validation and something else if needed -->
-        <div class="label text-xs">
+        <footer class="!text-xs">
           @if (
             form.submitted &&
             amountControl.errors &&
@@ -92,12 +103,11 @@ export interface TransferFormPayload {
               >Max amount available: {{ balance }} SILLY</span
             >
           }
-        </div>
+        </footer>
       </section>
-      <section class="text-slate-500 w-full">
-        <div class="label">
-          <span class="label-text">Receiver</span>
-        </div>
+      <section
+        class="text-slate-300 w-full flex flex-col justify-start items-stretch gap-2"
+      >
         <input
           type="text"
           name="receiverAddr"
@@ -105,11 +115,11 @@ export interface TransferFormPayload {
           class="grow input input-bordered w-full bg-transparent placeholder:text-slate-400"
           [ngClass]="{ 'input-error': !!receiverAddrControl.errors }"
           [(ngModel)]="model.receiverAddr"
-          [disabled]="!!isTransferDisabled"
+          [disabled]="!!isSendingTransfer"
           required
           #receiverAddrControl="ngModel"
         />
-        <div class="label text-xs">
+        <footer class="text-xs">
           @if (
             form.submitted &&
             receiverAddrControl.errors &&
@@ -124,41 +134,55 @@ export interface TransferFormPayload {
               Solana wallet public key</span
             >
           }
-        </div>
+        </footer>
       </section>
-      <section
+      <mat-dialog-actions
         class="w-full flex flex-row-reverse justify-center items-center gap-4"
       >
         <button
           class="btn btn-primary"
           type="submit"
-          [disabled]="form.invalid || !!isTransferDisabled"
+          class="btn btn-primary"
+          type="submit"
+          [disabled]="form.invalid || !!isSendingTransfer"
         >
-          Send
+          @if (isSendingTransfer) {
+            SENDING ...
+          } @else {
+            Send
+          }
         </button>
-        <form class="modal-action" method="dialog">
-          <button class="btn btn-neutral" [disabled]="isTransferDisabled">
-            Cancel
-          </button>
-        </form>
-      </section>
+        <button
+          class="btn btn-neutral"
+          (click)="onCancelTransfer()"
+          [disabled]="isSendingTransfer"
+          mat-dialog-close
+        >
+          Cancel
+        </button>
+      </mat-dialog-actions>
     </form>
   `,
   standalone: true,
-  imports: [FormsModule, NgClass],
+  imports: [FormsModule, NgClass, MatDialogContent, MatDialogActions],
 })
 export class TransferFormComponent {
+  private readonly _matDialog = inject(MatDialog);
   readonly model: TransferFormModel = {
     memo: undefined,
     amount: undefined,
     receiverAddr: undefined,
   };
-
+  @ViewChild('form') form!: NgForm;
   @Input() balance?: number;
-  @Input() isTransferDisabled?: boolean;
+  @Input() isSendingTransfer?: boolean;
 
   @Output() readonly submitForm = new EventEmitter<TransferFormPayload>();
 
+  onCancelTransfer() {
+    this._matDialog.closeAll();
+    this.form.resetForm();
+  }
   onSubmit(form: NgForm) {
     if (
       form.invalid ||

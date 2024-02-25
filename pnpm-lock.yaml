@@ -145,9 +145,6 @@ devDependencies:
   autoprefixer:
     specifier: ^10.4.0
     version: 10.4.17(postcss@8.4.34)
-  crypto:
-    specifier: ^1.0.1
-    version: 1.0.1
   daisyui:
     specifier: ^4.7.2
     version: 4.7.2(postcss@8.4.34)
@@ -8050,11 +8047,6 @@ packages:
       path-key: 3.1.1
       shebang-command: 2.0.0
       which: 2.0.2
-
-  /crypto@1.0.1:
-    resolution: {integrity: sha512-VxBKmeNcqQdiUQUW2Tzq0t377b54N2bMtXO/qiLa+6eRRmmC4qT3D4OnTGoT/U6O9aklQ/jTwbOtRMTTY8G0Ig==}
-    deprecated: This package is no longer supported. It's now a built-in Node module. If you've depended on crypto, you should switch to the one that's built-in.
-    dev: true
 
   /css-declaration-sorter@7.1.1(postcss@8.4.34):
     resolution: {integrity: sha512-dZ3bVTEEc1vxr3Bek9vGwfB5Z6ESPULhcRvO472mfjVnj8jRcTnKO8/JTczlvxM10Myb+wBM++1MtdO76eWcaQ==}

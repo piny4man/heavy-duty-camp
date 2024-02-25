@@ -1,46 +1,42 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import {
   TransferFormComponent,
   TransferFormPayload,
 } from './transfer-form.component';
 import { injectTransactionSender } from '@heavy-duty/wallet-adapter';
 import { createTransferInstructions } from '@heavy-duty/spl-utils';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'heavy-duty-camp-transfer-modal',
   template: `
-    <button class="btn btn-neutral" onclick="transfer_modal.showModal()">
-      Transfer
-    </button>
-    <dialog id="transfer_modal" class="modal">
-      <div
-        class="modal-box bg-base-100 bg-opacity-50 backdrop-blur text-slate-200"
-      >
-        <header>
-          <h3 class="font-bold text-lg">Transfer</h3>
-        </header>
-        <heavy-duty-camp-transfer-form
-          [balance]="balance"
-          (submitForm)="onTransfer($event)"
-          [isTransferDisabled]="isTransferDisabled"
-        ></heavy-duty-camp-transfer-form>
-      </div>
-    </dialog>
+    <section mat-dialog-container>
+      <header mat-dialog-title class="text-center text-slate-200 p-4">
+        <h3 class="font-bold text-lg">Transfer</h3>
+      </header>
+      <heavy-duty-camp-transfer-form
+        [balance]="balance"
+        (submitForm)="onTransfer($event)"
+        [isSendingTransfer]="isSendingTransfer"
+      ></heavy-duty-camp-transfer-form>
+    </section>
   `,
   standalone: true,
   imports: [TransferFormComponent],
 })
 export class TransferModalComponent {
+  constructor(private _snackBar: MatSnackBar) {}
   private readonly _transactionSender = injectTransactionSender();
-  isTransferDisabled = false;
+  private readonly _matDialog = inject(MatDialog);
+  isSendingTransfer = false;
 
   @Input() balance?: number;
 
   onTransfer(payload: TransferFormPayload) {
     this._transactionSender
       .send(({ publicKey }) => {
-        this.isTransferDisabled = true;
-
+        this.isSendingTransfer = true;
         return createTransferInstructions({
           memo: payload.memo,
           amount: payload.amount * 10 ** 9,
@@ -54,11 +50,14 @@ export class TransferModalComponent {
         next: (signature) => console.log(`Signature: ${signature}`),
         error: (err) => {
           console.error(err);
-          this.isTransferDisabled = false;
+          this.isSendingTransfer = false;
+          this._snackBar.open('🚨 Something went wrong', 'Try again');
         },
         complete: () => {
           console.info('Transfer ready');
-          this.isTransferDisabled = false;
+          this.isSendingTransfer = false;
+          this._snackBar.open('✅ Transfer completed', 'Ok');
+          setTimeout(() => this._matDialog.closeAll(), 800);
         },
       });
   }
