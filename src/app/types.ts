@@ -15,16 +15,7 @@ export type TransactionsResult = {
 
 type Transaction = {
   timestamp: string;
+  type: string;
   fee: number;
   fee_payer: string;
-  raw: {
-    meta: {
-      postTokenBalances: TokenBalances[];
-    };
-  };
-};
-
-type TokenBalances = {
-  mint: string;
-  owner: string;
 };

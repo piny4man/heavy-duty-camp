@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { ShyftApiService } from '../shyft-api.service';
+import { ShyftApiService } from '../../../shyft-api.service';
 import { WalletStore } from '@heavy-duty/wallet-adapter';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { computedAsync } from 'ngxtension/computed-async';
@@ -23,7 +23,7 @@ import { FormsModule } from '@angular/forms';
             [(ngModel)]="searchTerm"
             type="text"
             class="grow bg-transparent"
-            placeholder="Search transactions using 'From' or 'To' address"
+            placeholder="Search transactions using 'From address' or 'Type of transaction'"
           />
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -49,8 +49,8 @@ import { FormsModule } from '@angular/forms';
               <tr>
                 <th>Date</th>
                 <th>Amount</th>
-                <th>From</th>
-                <th>To</th>
+                <th>Type</th>
+                <th class="max-w-64">From</th>
               </tr>
             </thead>
             <tbody>
@@ -61,8 +61,15 @@ import { FormsModule } from '@angular/forms';
                 <tr>
                   <td>{{ transaction.timestamp | date: 'short' }}</td>
                   <td>{{ transaction.fee }} SOL</td>
-                  <td>{{ transaction.fee_payer }}</td>
-                  <td>{{ transaction.raw.meta.postTokenBalances[0].owner }}</td>
+                  <td title="{{ transaction.type }}">
+                    {{ transaction.type }}
+                  </td>
+                  <td
+                    class="max-w-64 text-ellipsis"
+                    title="{{ transaction.fee_payer }}"
+                  >
+                    {{ transaction.fee_payer }}
+                  </td>
                 </tr>
               } @empty {
                 <tr>
@@ -98,9 +105,7 @@ export class TransactionsSectionComponent {
         transaction.fee_payer
           .toLowerCase()
           .includes(this.searchTerm.toLowerCase()) ||
-        transaction.raw.meta.postTokenBalances[0].owner
-          .toLowerCase()
-          .includes(this.searchTerm.toLowerCase()),
+        transaction.type.toLowerCase().includes(this.searchTerm.toLowerCase()),
     );
   }
 }

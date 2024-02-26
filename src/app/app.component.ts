@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { ConnectionStore } from '@heavy-duty/wallet-adapter';
 import { HdWalletMultiButtonComponent } from '@heavy-duty/wallet-adapter-material';
+import { ShyftApiService } from './shyft-api.service';
 
 @Component({
   standalone: true,
@@ -67,4 +69,11 @@ import { HdWalletMultiButtonComponent } from '@heavy-duty/wallet-adapter-materia
     <router-outlet></router-outlet>
   </main>`,
 })
-export class AppComponent {}
+export class AppComponent implements OnInit {
+  private readonly _shyftApiService = inject(ShyftApiService);
+  private readonly _connectionStore = inject(ConnectionStore);
+
+  ngOnInit() {
+    this._connectionStore.setEndpoint(this._shyftApiService.getRpcEndpoint());
+  }
+}

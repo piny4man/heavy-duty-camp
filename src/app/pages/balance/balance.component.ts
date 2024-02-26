@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { BalanceSectionComponent } from '../sections/balance-section.component';
-import { TransactionsSectionComponent } from '../sections/transactions-section.component';
+import { BalanceSectionComponent } from './sections/balance-section.component';
+import { TransactionsSectionComponent } from './sections/transactions-section.component';
 
 @Component({
   selector: 'heavy-duty-camp-home-page',

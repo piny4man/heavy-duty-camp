@@ -1,13 +1,15 @@
 import { Component, inject } from '@angular/core';
-import { ShyftApiService } from '../shyft-api.service';
+import { ShyftApiService } from '../../../shyft-api.service';
 import { WalletStore } from '@heavy-duty/wallet-adapter';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { computedAsync } from 'ngxtension/computed-async';
 import { NgIf } from '@angular/common';
+import { TransferModalComponent } from 'src/app/components/transfer-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'heavy-duty-camp-balance-section',
-  imports: [NgIf],
+  imports: [NgIf, TransferModalComponent],
   template: `
     <section
       class="text-slate-700 flex flex-col justify-start items-center gap-4"
@@ -66,6 +68,11 @@ import { NgIf } from '@angular/common';
           </div>
         </div>
       </article>
+      <footer *ngIf="solanaBalance() || accountSilly()">
+        <button class="btn btn-primary" (click)="onOpenTransferModal()">
+          Transfer
+        </button>
+      </footer>
     </section>
   `,
   standalone: true,
@@ -74,6 +81,7 @@ export class BalanceSectionComponent {
   private readonly _shyftApiService = inject(ShyftApiService);
   private readonly _walletStore = inject(WalletStore);
   private readonly _publicKey = toSignal(this._walletStore.publicKey$);
+  private readonly _matDialog = inject(MatDialog);
 
   readonly solanaBalance = computedAsync(
     () => this._shyftApiService.getSolanaBalance(this._publicKey()?.toBase58()),
@@ -87,4 +95,12 @@ export class BalanceSectionComponent {
       ),
     { requireSync: true },
   );
+  onOpenTransferModal() {
+    this._matDialog.open(TransferModalComponent, {
+      data: {
+        balance: this.solanaBalance()?.balance,
+      },
+      width: '450px',
+    });
+  }
 }
